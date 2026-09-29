@@ -2,6 +2,8 @@ import os
 import shutil
 from fastapi import Form
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import hmac
 import hashlib
 import json
@@ -71,6 +73,16 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+app.mount('/css', StaticFiles(directory='frontend'), name='css')
+app.mount('/js', StaticFiles(directory='frontend'), name='js')
+app.mount('/img', StaticFiles(directory='frontend/img'), name='img')
+
+
+@app.get('/')
+async def serve_frontend():
+    return FileResponse('frontend/index.html')
+
 
 @app.post('/auth', response_model=schemas.Token)
 async def auth_telegram(auth_data: schemas.TelegramAuth, db_session: AsyncSession = Depends(get_db)):
