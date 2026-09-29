@@ -12,7 +12,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 WEBAPP_URL = os.getenv('WEBAPP_URL')
 
 if not BOT_TOKEN:
-    raise ValueError('BOT_TOKEN isnt in .env')
+    raise ValueError('bot token isnt in env')
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -31,8 +31,8 @@ async def start_handler(message: types.Message):
         ]
     )
     await message.answer(
-        f"hey, {message.from_user.first_name}\n\n"
-        "pulse the botton",
+        f'hey, {message.from_user.first_name}\n\n'
+        'pulse the botton',
         reply_markup=keyboard
     )
 
