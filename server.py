@@ -1,4 +1,7 @@
 import os
+import shutil
+from fastapi import Form
+from fastapi.responses import FileResponse
 import hmac
 import hashlib
 import json
@@ -91,3 +94,70 @@ async def create_folder(folder: schemas.FolderCreate, current_user: models.User 
 @app.get('/folders', response_model=list[schemas.FolderResponse])
 async def get_folders(parent_id: int | None = None, current_user: models.User = Depends(get_current_user), db_session: AsyncSession = Depends(get_db)):
     return await crud.get_user_folders(db_session, current_user.id, parent_id)
+
+
+@app.post('/files', response_model=schemas.FileResponse)
+async def upload_file(
+    file: UploadFile,
+    folder_id: int | None = Form(None),
+    current_user: models.User = Depends(get_current_user),
+    db_session: AsyncSession = Depends(get_db)
+):
+    upload_dir = 'uploads'
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    file_path = f'{upload_dir}/{current_user.id}_{file.filename}'
+    
+    with open(file_path, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    file_size = os.path.getsize(file_path)
+    
+    return await crud.create_file(
+        db_session,
+        user_id=current_user.id,
+        name=file.filename,
+        storage_path=file_path,
+        size_bytes=file_size,
+        mime_type=file.content_type,
+        folder_id=folder_id
+    )
+
+@app.get('/files', response_model=list[schemas.FileResponse])
+async def get_files(
+    folder_id: int | None = None, 
+    current_user: models.User = Depends(get_current_user), 
+    db_session: AsyncSession = Depends(get_db)
+):
+    return await crud.get_user_files(db_session, current_user.id, folder_id)
+
+@app.get('/files/{file_id}/download')
+async def download_file(
+    file_id: int, 
+    current_user: models.User = Depends(get_current_user), 
+    db_session: AsyncSession = Depends(get_db)
+):
+    db_file = await crud.get_file_by_id(db_session, file_id, current_user.id)
+    if not db_file or not os.path.exists(db_file.storage_path):
+        raise HTTPException(status_code=404, detail='File not found')
+    
+    return FileResponse(
+        path=db_file.storage_path, 
+        filename=db_file.name, 
+        media_type=db_file.mime_type
+    )
+
+@app.delete('/files/{file_id}')
+async def delete_file(
+    file_id: int, 
+    current_user: models.User = Depends(get_current_user), 
+    db_session: AsyncSession = Depends(get_db)
+):
+    db_file = await crud.delete_file(db_session, file_id, current_user.id)
+    if not db_file:
+        raise HTTPException(status_code=404, detail='File not found')
+    
+    if os.path.exists(db_file.storage_path):
+        os.remove(db_file.storage_path)
+        
+    return {'status': 'deleted'}
