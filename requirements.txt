@@ -2,3 +2,4 @@ aiogram
 sqlalchemy
 fastapi
 uvicorn
+PyJWT
