@@ -161,3 +161,16 @@ async def delete_file(
         os.remove(db_file.storage_path)
         
     return {'status': 'deleted'}
+
+
+@app.delete('/folders/{folder_id}')
+async def delete_folder(
+    folder_id: int,
+    current_user: models.User = Depends(get_current_user),
+    db_session: AsyncSession = Depends(get_db)
+):
+    success = await crud.delete_folder(db_session, folder_id, current_user.id)
+    if not success:
+        raise HTTPException(status_code=404, detail='Folder not found')
+    
+    return {'status': 'deleted'}
