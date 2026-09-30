@@ -3,3 +3,6 @@ sqlalchemy
 fastapi
 uvicorn
 PyJWT
+greenlet
+asyncpg
+python-multipart

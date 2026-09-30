@@ -1,40 +1,58 @@
+:root {
+    --bg-dark: #000000;
+    --bg-card: #1c1c1e;
+    --accent-green: #ccff00;
+    --text-main: #ffffff;
+    --text-muted: #8e8e93;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background-color: #000000;
-    color: #ffffff;
-    overflow: hidden;
-    height: 100vh;
-    width: 100vw;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden; 
 }
 
 .screen {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-}
-
-.screen.active {
+    width: 100vw;
+    height: 100vh;
     display: flex;
+    flex-direction: column;
+    transition: opacity 0.4s ease;
 }
 
-.bg-video {
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+#onboarding {
+    z-index: 10;
+}
+
+.bg-wrapper {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
     z-index: 1;
+}
+
+.bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     opacity: 0.8;
 }
 
@@ -44,171 +62,155 @@ body {
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    padding-bottom: 20px;
 }
 
-.avatar-container img {
-    height: 55%;
+#avatar-img {
+    max-height: 50vh;
     object-fit: contain;
     transition: opacity 0.3s ease;
 }
 
-.content-card {
+.content-container {
     position: relative;
     z-index: 3;
-    padding: 32px 24px;
+    padding: 30px 24px 40px;
     background: linear-gradient(to top, rgba(0,0,0,1) 40%, rgba(0,0,0,0));
+    min-height: 40vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 40vh;
 }
 
 #slide-title {
     font-size: 32px;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 12px;
     line-height: 1.1;
+    transition: opacity 0.3s ease;
 }
 
 #slide-desc {
     font-size: 16px;
-    color: #a1a1aa;
+    color: var(--text-muted);
     margin-bottom: 40px;
     line-height: 1.4;
+    transition: opacity 0.3s ease;
 }
 
-.nav-row {
+.controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
 .indicators {
     display: flex;
-    gap: 6px;
+    gap: 8px;
 }
 
 .dot {
-    width: 8px;
+    width: 20px;
     height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
-    background-color: #333333;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s, width 0.3s;
 }
 
 .dot.active {
-    width: 24px;
-    background-color: #b2ff05;
+    background-color: var(--accent-green);
 }
 
-.circle-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #1c1c1e;
+.nav-btn {
+    background-color: rgba(255, 255, 255, 0.1);
     border: none;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.circle-btn:active {
-    transform: scale(0.95);
-}
-
-.btn-start {
-    background-color: #b2ff05;
-    color: #000000;
-    font-weight: 700;
+    border-radius: 30px;
+    height: 50px;
+    padding: 0 20px;
+    color: var(--text-main);
     font-size: 16px;
-    border-radius: 24px;
-    padding: 0 24px;
-    width: auto;
-    height: 48px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-btn.finish {
+    background-color: var(--accent-green);
+    color: #000;
+}
+
+.nav-btn.finish .icon-arrow {
+    display: none;
+}
+
+#main-app {
+    z-index: 5;
+    background-color: var(--bg-dark);
+    overflow-y: auto;
+    padding: 20px;
 }
 
 .mono-header {
-    padding: 20px;
-    background-color: #111111;
-    border-bottom: 1px solid #1c1c1e;
-}
-
-.user-info {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    margin-bottom: 30px;
+    padding-top: 10px;
 }
 
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #b2ff05;
-    color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-#user-name {
-    font-size: 18px;
+.header-info h2 {
+    font-size: 24px;
     font-weight: 600;
 }
 
-.mono-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #000000;
-    overflow-y: auto;
-}
-
-.section-title {
+.header-info p {
+    color: var(--text-muted);
     font-size: 14px;
-    color: #8e8e93;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    font-weight: 600;
+    margin-top: 4px;
 }
 
-.grid-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.profile-pic {
+    width: 48px;
+    height: 48px;
+    background-color: var(--bg-card);
+    border-radius: 50%;
+    background-image: url('img/avatars/avatar_1.png');
+    background-size: cover;
+    background-position: center;
 }
 
-.empty-state {
-    text-align: center;
-    color: #48484a;
-    margin-top: 40px;
-    font-size: 16px;
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-bottom: 100px;
 }
 
-.fab {
+.photo-card {
+    background-color: var(--bg-card);
+    border-radius: 20px;
+    aspect-ratio: 4/5;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.fab-upload {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 30px;
+    right: 30px;
     width: 60px;
     height: 60px;
-    border-radius: 50%;
-    background-color: #b2ff05;
-    color: #000000;
+    border-radius: 20px; 
+    background-color: var(--accent-green);
     border: none;
-    box-shadow: 0 8px 24px rgba(178, 255, 5, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 10px 20px rgba(204, 255, 0, 0.2);
     cursor: pointer;
-    z-index: 10;
-}
-
-.fab:active {
-    transform: scale(0.95);
+    z-index: 20;
 }

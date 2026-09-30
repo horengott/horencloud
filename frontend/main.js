@@ -1,122 +1,111 @@
-const slides = [
-    {
-        title: 'Welcome to Horen Cloud',
-        desc: 'Tu vida digital, segura y siempre a tu alcance.',
-        avatar: 'img/avatars/avatar_1.png'
-    },
-    {
-        title: 'Tus recuerdos intactos',
-        desc: 'Guarda tus fotos y videos con la mejor calidad.',
-        avatar: 'img/avatars/avatar_2.png'
-    },
-    {
-        title: 'Magia con IA integrada',
-        desc: 'Elimina fondos, mejora la calidad y transforma tus fotos en segundos.',
-        avatar: 'img/avatars/avatar_3.png'
-    },
-    {
-        title: 'Comparte fácilmente',
-        desc: 'Envía tus archivos a quien quieras sin salir de la app.',
-        avatar: 'img/avatars/avatar_1.png'
-    }
-];
-
-let currentSlide = 0;
-const API_BASE = 'https://tu-backend-url.com'; 
-
-const onboardingScreen = document.getElementById('onboarding-screen');
-const mainScreen = document.getElementById('main-screen');
-const titleEl = document.getElementById('slide-title');
-const descEl = document.getElementById('slide-desc');
-const avatarEl = document.getElementById('avatar-img');
-const dots = document.querySelectorAll('.dot');
-const nextBtn = document.getElementById('next-btn');
-
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-function updateSlide() {
-    titleEl.textContent = slides[currentSlide].title;
-    descEl.textContent = slides[currentSlide].desc;
-    avatarEl.src = slides[currentSlide].avatar;
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentSlide);
-    });
-
-    if (currentSlide === slides.length - 1) {
-        nextBtn.innerHTML = 'Empezar';
-        nextBtn.classList.remove('circle-btn');
-        nextBtn.classList.add('btn-start');
-    }
-}
-
-async function authenticateAndLoad() {
-    if (tg.initDataUnsafe?.user) {
-        const user = tg.initDataUnsafe.user;
-        document.getElementById('user-name').textContent = user.first_name;
-        document.getElementById('tg-avatar').textContent = user.first_name.charAt(0).toUpperCase();
-    }
-
-    if (!tg.initData) return;
-
-    try {
-        const response = await fetch(`${API_BASE}/auth`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ init_data: tg.initData })
-        });
-        const data = await response.json();
-        localStorage.setItem('access_token', data.access_token);
-        loadFiles();
-    } catch (error) {
-        console.error('Auth error');
-    }
-}
+const initData = window.Telegram?.WebApp?.initData || '';
+const authHeaders = { 
+    'Authorization': `Bearer ${initData}` 
+};
 
 async function loadFiles() {
-    const token = localStorage.getItem('access_token');
-    if (!token) return;
-
     try {
-        const response = await fetch(`${API_BASE}/files`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const files = await response.json();
-        const container = document.getElementById('cloud-items');
+        // Llama al endpoint GET /files[cite: 11]
+        const response = await fetch('/files', { headers: authHeaders });
         
-        if (files.length > 0) {
-            container.innerHTML = '';
+        if (response.ok) {
+            const files = await response.json();
+            renderGallery(files);
+        } else {
+            console.error("Error al obtener los archivos");
         }
     } catch (error) {
-        console.error('Fetch error');
+        console.error("Error de red:", error);
     }
 }
 
-nextBtn.addEventListener('click', () => {
-    if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        updateSlide();
-    } else {
-        localStorage.setItem('onboarding_done', 'true');
-        onboardingScreen.classList.remove('active');
-        mainScreen.classList.add('active');
-        authenticateAndLoad();
+function renderGallery(files) {
+    const galleryGrid = document.getElementById('gallery-grid');
+    galleryGrid.innerHTML = '';
+
+    if (files.length === 0) {
+        galleryGrid.innerHTML = `
+            <div class="empty-state">
+                <p style="color: var(--text-secondary)">No tienes fotos guardadas aún</p>
+            </div>`;
+        return;
+    }
+
+    files.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        
+        const imgUrl = `/files/${file.id}/download`; 
+        
+        item.innerHTML = `<img src="${imgUrl}" alt="${file.name}" loading="lazy">`;
+        item.onclick = () => openModal({ id: file.id, url: imgUrl, name: file.name });
+        
+        galleryGrid.appendChild(item);
+    });
+}
+
+const fileInput = document.getElementById('file-input');
+const uploadBtn = document.getElementById('upload-btn');
+
+uploadBtn.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', async (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    const originalContent = uploadBtn.innerHTML;
+    uploadBtn.innerHTML = '<span style="color:#000; font-weight:bold;">...</span>';
+
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file); 
+
+        try {
+            await fetch('/files', {
+                method: 'POST',
+                headers: authHeaders, 
+                body: formData
+            });
+        } catch (error) {
+            console.error(`Error subiendo ${file.name}:`, error);
+        }
+    }
+
+    uploadBtn.innerHTML = originalContent;
+    fileInput.value = '';
+    loadFiles(); 
+});
+
+const deleteBtn = document.getElementById('delete-btn');
+let selectedPhotoId = null;
+
+function openModal(photo) {
+    selectedPhotoId = photo.id;
+    document.getElementById('modal-img').src = photo.url;
+    document.getElementById('photo-modal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('photo-modal').classList.remove('open');
+    selectedPhotoId = null;
+}
+
+deleteBtn.addEventListener('click', async () => {
+    if (selectedPhotoId) {
+        try {
+            const response = await fetch(`/files/${selectedPhotoId}`, {
+                method: 'DELETE',
+                headers: authHeaders
+            });
+            
+            if (response.ok) {
+                closeModal();
+                loadFiles(); 
+            }
+        } catch (error) {
+            console.error("failed deleting", error);
+        }
     }
 });
 
-function initApp() {
-    const isFirstTime = !localStorage.getItem('onboarding_done');
-    
-    if (isFirstTime) {
-        onboardingScreen.classList.add('active');
-        mainScreen.classList.remove('active');
-        updateSlide();
-    } else {
-        onboardingScreen.classList.remove('active');
-        mainScreen.classList.add('active');
-        authenticateAndLoad();
-    }
-}
-
-initApp();
+loadFiles();

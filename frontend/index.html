@@ -1,55 +1,64 @@
 <!DOCTYPE html>
-<html lang='es'>
+<html lang="es">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Horen Cloud</title>
-    <link rel='stylesheet' href='styles.css'>
-    <script src='https://telegram.org/js/telegram-web-app.js'></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id='onboarding-screen' class='screen active'>
-        <img src='img/fond.jpg' class='bg-video' alt='background'>
-        <div class='avatar-container'>
-            <img id='avatar-img' src='img/avatars/avatar_1.png' alt='avatar'>
+    <div id="onboarding" class="screen hidden">
+        <div class="bg-wrapper">
+            <img src="img/fond.jpg" alt="Fondo" class="bg-img">
         </div>
-        <div class='content-card'>
-            <h1 id='slide-title'>Welcome to Horen Cloud</h1>
-            <p id='slide-desc'>Tu vida digital, segura y siempre a tu alcance.</p>
-            <div class='nav-row'>
-                <div class='indicators'>
-                    <div class='dot active'></div>
-                    <div class='dot'></div>
-                    <div class='dot'></div>
-                    <div class='dot'></div>
+        
+        <div class="avatar-container">
+            <img id="avatar-img" src="img/avatars/avatar_1.png" alt="Avatar">
+        </div>
+
+        <div class="content-container">
+            <h1 id="slide-title">welcome to horencloud</h1>
+            <p id="slide-desc">tu galería en telegram</p>
+            
+            <div class="controls">
+                <div class="indicators" id="indicators">
                 </div>
-                <button id='next-btn' class='circle-btn'>
-                    <svg viewBox='0 0 24 24' width='24' height='24' stroke='currentColor' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'><polyline points='9 18 15 12 9 6'></polyline></svg>
+                <button id="next-btn" class="nav-btn">
+                    <span id="btn-text"></span>
+                    <svg viewBox="0 0 24 24" class="icon-arrow" width="24" height="24">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id='main-screen' class='screen'>
-        <header class='mono-header'>
-            <div class='user-info'>
-                <div class='user-avatar' id='tg-avatar'></div>
-                <h2 id='user-name'>Cargando...</h2>
+    <div id="main-app" class="screen hidden">
+        <header class="mono-header">
+            <div class="header-info">
+                <h2>mi cloud</h2>
+                <p>dohuya GB disponibles</p>
             </div>
+            <div class="profile-pic"></div>
         </header>
         
-        <main class='mono-content'>
-            <div class='section-title'>Tus Archivos</div>
-            <div id='cloud-items' class='grid-list'>
-                <div class='empty-state'>No hay archivos aún</div>
-            </div>
+        <main class="gallery-grid">
+            <div class="photo-card"></div>
+            <div class="photo-card"></div>
+            <div class="photo-card"></div>
+            <div class="photo-card"></div>
+            <div class="photo-card"></div>
+            <div class="photo-card"></div>
         </main>
 
-        <button id='fab-upload' class='fab'>
-            <svg viewBox='0 0 24 24' width='28' height='28' stroke='currentColor' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='5' x2='12' y2='19'></line><line x1='5' y1='12' x2='19' y2='12'></line></svg>
+        <button class="fab-upload">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+                <path d="M12 5v14M5 12h14" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
         </button>
     </div>
 
-    <script src='main.js'></script>
+    <script src="main.js"></script>
 </body>
 </html>

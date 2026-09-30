@@ -1,7 +1,7 @@
 from typing import Optional, Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-import models
+from db import models
 import schemas
 
 
