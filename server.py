@@ -3,7 +3,6 @@ import shutil
 from fastapi import Form
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import hmac
 import hashlib
 import json
@@ -73,6 +72,11 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/")
+async def serve_frontend()
+    return FileResponse('frontend/index.html')
 
 
 @app.post('/auth', response_model=schemas.Token)
