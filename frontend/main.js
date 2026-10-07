@@ -141,6 +141,7 @@ async function initApp() {
     const isAuthenticated = await authenticate();
     if (isAuthenticated) {
         loadFiles();
+        document.getElementById('main-app').classList.remove('hidden');
     }
 }
 
