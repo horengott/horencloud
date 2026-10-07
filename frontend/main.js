@@ -132,7 +132,6 @@ deleteBtn.addEventListener('click', async () => {
     }
 });
 
-
 async function initApp() {
     if (window.Telegram?.WebApp) {
         window.Telegram.WebApp.ready();
