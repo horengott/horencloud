@@ -43,22 +43,24 @@
             <div class="profile-pic"></div>
         </header>
         
-        <main class="gallery-grid">
-            <div class="photo-card"></div>
-            <div class="photo-card"></div>
-            <div class="photo-card"></div>
-            <div class="photo-card"></div>
-            <div class="photo-card"></div>
-            <div class="photo-card"></div>
+        <main id="gallery-grid" class="gallery-grid">
         </main>
 
-        <button class="fab-upload">
+        <button id="upload-btn" class="fab-upload">
             <svg viewBox="0 0 24 24" width="28" height="28">
                 <path d="M12 5v14M5 12h14" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
         </button>
+
+        <input type="file" id="file-input" style="display: none;" multiple>
+
+        <div id="photo-modal" class="modal hidden">
+            <img id="modal-img" src="" alt="Vista previa">
+            <button id="delete-btn">delete</button>
+            <button onclick="closeModal()">close</button>
+        </div>
     </div>
 
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
