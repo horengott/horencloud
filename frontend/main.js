@@ -1,21 +1,45 @@
 const initData = window.Telegram?.WebApp?.initData || '';
-const authHeaders = { 
-    'Authorization': `Bearer ${initData}` 
-};
+let authHeaders = {};
+
+async function authenticate() {
+    if (!initData) {
+        document.body.innerHTML = "<h3 style='color:white;text-align:center;margin-top:50px;'>open telegram pls.../h3>";
+        return false;
+    }
+
+    try {
+        const response = await fetch('/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ init_data: initData })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            authHeaders = { 'Authorization': `Bearer ${data.access_token}` };
+            return true;
+        } else {
+            console.error("server authorization error");
+            return false;
+        }
+    } catch (error) {
+        console.error("web authorization error:", error);
+        return false;
+    }
+}
 
 async function loadFiles() {
     try {
-        // Llama al endpoint GET /files[cite: 11]
         const response = await fetch('/files', { headers: authHeaders });
         
         if (response.ok) {
             const files = await response.json();
             renderGallery(files);
         } else {
-            console.error("Error al obtener los archivos");
+            console.error("error of getting files");
         }
     } catch (error) {
-        console.error("Error de red:", error);
+        console.error("web error:", error);
     }
 }
 
@@ -26,7 +50,7 @@ function renderGallery(files) {
     if (files.length === 0) {
         galleryGrid.innerHTML = `
             <div class="empty-state">
-                <p style="color: var(--text-secondary)">No tienes fotos guardadas aún</p>
+                <p style="color: var(--text-secondary)">no photos</p>
             </div>`;
         return;
     }
@@ -108,4 +132,17 @@ deleteBtn.addEventListener('click', async () => {
     }
 });
 
-loadFiles();
+
+async function initApp() {
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    }
+    
+    const isAuthenticated = await authenticate();
+    if (isAuthenticated) {
+        loadFiles();
+    }
+}
+
+initApp();
