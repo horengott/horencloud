@@ -75,7 +75,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-async def serve_frontend()
+async def serve_frontend():
     return FileResponse('frontend/index.html')
 
 
