@@ -191,11 +191,19 @@ body {
     padding-bottom: 100px;
 }
 
-.photo-card {
+.photo-item {
     background-color: var(--bg-card);
+    aspect-ratio: 1/1;
+    overflow: hidden;
     border-radius: 20px;
-    aspect-ratio: 4/5;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .fab-upload {
