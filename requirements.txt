@@ -7,3 +7,4 @@ PyJWT
 greenlet
 asyncpg
 python-multipart
+boto3
