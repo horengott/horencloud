@@ -142,6 +142,8 @@ async function initApp() {
     if (isAuthenticated) {
         loadFiles();
         document.getElementById('main-app').classList.remove('hidden');
+    } else {
+        document.getElementById('main-app').classList.remove('hidden');
     }
 }
 

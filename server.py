@@ -1,5 +1,6 @@
 import os
 import shutil
+import asyncio
 from fastapi import Form
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +18,7 @@ from db import crud
 from db import models
 from db.database import get_db, engine, Base
 from contextlib import asynccontextmanager
+from bot.main import bot, dp
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 JWT_SECRET = os.getenv('JWT_SECRET')
@@ -69,6 +71,7 @@ async def init_db():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    polling_task = asyncio.create_task(dp.start_polling(bot))
     yield
 
 app = FastAPI(lifespan=lifespan)
