@@ -171,13 +171,35 @@ async def upload_file(
     )
 
 
-@app.get('/files', response_model=list[schemas.FileResponse])
+@app.get('/files')
 async def get_files(
-    folder_id: int | None = None, 
-    current_user: models.User = Depends(get_current_user), 
+    current_user: models.User = Depends(get_current_user),
     db_session: AsyncSession = Depends(get_db)
 ):
-    return await crud.get_user_files(db_session, current_user.id, folder_id)
+    files = await crud.get_user_files(db_session, user_id=current_user.id)
+    
+    file_list = []
+    for f in files:
+        if f.storage_path and not f.storage_path.startswith("http"):
+            url = s3_client.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': R2_BUCKET_NAME, 'Key': f.storage_path},
+                ExpiresIn=604800 
+            )
+        else:
+            url = f.storage_path
+
+        file_list.append({
+            "id": f.id,
+            "name": f.name,
+            "storage_path": url,  
+            "size_bytes": f.size_bytes,
+            "mime_type": f.mime_type,
+            "folder_id": f.folder_id
+        })
+            
+    return file_list
+
 
 @app.get('/files/{file_id}/download')
 async def download_file(

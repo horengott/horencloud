@@ -59,8 +59,8 @@ function renderGallery(files) {
         const item = document.createElement('div');
         item.className = 'photo-item';
         
-        const imgUrl = `/files/${file.id}/download`; 
-        
+        const imgUrl = file.storage_path;
+
         item.innerHTML = `<img src="${imgUrl}" alt="${file.name}" loading="lazy">`;
         item.onclick = () => openModal({ id: file.id, url: imgUrl, name: file.name });
         
