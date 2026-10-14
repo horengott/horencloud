@@ -23,13 +23,13 @@ from contextlib import asynccontextmanager
 from bot.main import bot, dp
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-JWT_SECRET = os.getenv('JWT_SECRET')
+JWT_SECRET = os.getenv('JWT_SECRET', 'default_horencloud_fallback_jwt_secret_key_2026_99x')
 ALGORITHM = 'HS256'
 
-R2_ENDPOINT_URL = os.getenv("ENDPOINT_URL")
-R2_ACCESS_KEY_ID = os.getenv("KEY_ID")
-R2_SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
-R2_BUCKET_NAME = os.getenv("BUCKET_NAME")
+R2_ENDPOINT_URL = os.getenv('ENDPOINT_URL')
+R2_ACCESS_KEY_ID = os.getenv('KEY_ID')
+R2_SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
+R2_BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 
 s3_client = boto3.client(
