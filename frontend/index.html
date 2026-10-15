@@ -12,15 +12,12 @@
         <div class="bg-wrapper">
             <img src="img/fond.jpg" alt="Fondo" class="bg-img">
         </div>
-        
         <div class="avatar-container">
             <img id="avatar-img" src="img/avatars/avatar_1.png" alt="Avatar">
         </div>
-
         <div class="content-container">
             <h1 id="slide-title">welcome to horencloud</h1>
             <p id="slide-desc">tu galería en telegram</p>
-            
             <div class="controls">
                 <div class="indicators" id="indicators">
                 </div>
@@ -37,66 +34,81 @@
     <div id="main-app" class="screen hidden">
         <header class="mono-header">
             <div class="header-left">
-                <button id="back-btn" class="hidden">
+                <button id="back-btn" class="hidden interactive">
                     <svg viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
                 <div class="header-info">
-                    <h2 id="app-title">mi cloud</h2>
-                    <p>dohuya GB disponibles</p>
+                    <h2 id="app-title"><span class="greeting">zdarova, </span><span id="greeting-name"></span></h2>
+                    <p id="storage-info">10 GB disponibles</p>
                 </div>
             </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <button id="delete-folder-btn" class="hidden" style="background: none; border: none; cursor: pointer;">
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <button id="delete-folder-btn" class="hidden interactive btn-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24">
                         <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="#ff3b30" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                <div class="profile-pic" id="user-avatar"></div>
+                <div class="profile-pic interactive" id="user-avatar"></div>
             </div>
         </header>
         
         <main id="folders-grid" class="gallery-grid"></main>
         <main id="gallery-grid" class="gallery-grid hidden"></main>
 
-        <button id="fab-btn" class="fab-upload">
+        <button id="fab-btn" class="fab-upload interactive">
             <svg viewBox="0 0 24 24" width="28" height="28">
                 <path d="M12 5v14M5 12h14" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
         </button>
 
         <input type="file" id="file-input" style="display: none;" multiple>
+        <input type="file" id="folder-input" style="display: none;" webkitdirectory directory multiple>
 
         <div id="photo-modal" class="modal hidden">
-            <img id="modal-img" src="" alt="Vista previa">
-            <button id="download-btn" style="background-color: var(--accent-green); color: #000; border: none; padding: 12px 24px; border-radius: 12px; font-weight: bold; margin-bottom: 12px; width: 100%; max-width: 200px;">download</button>
-            <button id="delete-btn">delete</button>
-            <button onclick="closeModal()">close</button>
+            <div class="photo-wrapper" id="photo-wrapper">
+                <img id="modal-img" src="" alt="Vista previa">
+            </div>
+            <div class="floating-controls">
+                <button id="download-btn" class="glass-btn primary interactive">descargar</button>
+                <button id="delete-btn" class="glass-btn danger interactive">eliminar</button>
+                <button onclick="closeModal()" class="glass-btn secondary interactive">cerrar</button>
+            </div>
         </div>
 
-        <div id="folder-modal" class="modal hidden">
+        <div id="folder-modal" class="modal hidden glass-modal">
             <div class="modal-content">
                 <h3>nueva carpeta</h3>
                 <input type="text" id="folder-name" placeholder="nombre de la carpeta">
-                <button id="select-cover-btn">seleccionar portada</button>
+                <button id="select-cover-btn" class="interactive">seleccionar portada</button>
                 <img id="cover-preview" class="hidden" src="">
                 <div class="modal-actions">
-                    <button onclick="closeFolderModal()">cancelar</button>
-                    <button id="create-folder-btn">crear</button>
+                    <button onclick="closeFolderModal()" class="interactive">cancelar</button>
+                    <button id="create-folder-btn" class="interactive">crear</button>
                 </div>
             </div>
         </div>
 
-        <div id="cover-selection-modal" class="modal hidden">
+        <div id="cover-selection-modal" class="modal hidden glass-modal">
             <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
                 <h3>selecciona una portada</h3>
                 <div id="cover-grid" class="gallery-grid" style="margin-top: 16px;"></div>
-                <button onclick="closeCoverSelectionModal()" style="margin-top: 16px; width: 100%;">cancelar</button>
+                <button onclick="closeCoverSelectionModal()" style="margin-top: 16px; width: 100%;" class="interactive">cancelar</button>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="modal hidden glass-modal">
+            <div class="modal-content confirm-box">
+                <h3 id="confirm-title">confirmar</h3>
+                <p id="confirm-desc">estás seguro?</p>
+                <div class="modal-actions">
+                    <button id="confirm-cancel" class="interactive">cancelar</button>
+                    <button id="confirm-ok" class="danger-btn interactive">eliminar</button>
+                </div>
             </div>
         </div>
     </div>
-
     <script src="main.js" defer></script>
 </body>
 </html>
