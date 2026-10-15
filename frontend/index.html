@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#08090a">
     <title>Horen Cloud</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
@@ -12,12 +13,15 @@
         <div class="bg-wrapper">
             <img src="img/fond.jpg" alt="Fondo" class="bg-img">
         </div>
+        
         <div class="avatar-container">
             <img id="avatar-img" src="img/avatars/avatar_1.png" alt="Avatar">
         </div>
+
         <div class="content-container">
             <h1 id="slide-title">welcome to horencloud</h1>
             <p id="slide-desc">tu galería en telegram</p>
+            
             <div class="controls">
                 <div class="indicators" id="indicators">
                 </div>
@@ -32,83 +36,164 @@
     </div>
 
     <div id="main-app" class="screen hidden">
+        <div class="ambient ambient-a"></div>
+        <div class="ambient ambient-b"></div>
         <header class="mono-header">
             <div class="header-left">
-                <button id="back-btn" class="hidden interactive">
-                    <svg viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <button id="back-btn" class="icon-button hidden" aria-label="Volver a inicio">
+                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
+                <div class="brand-mark" aria-hidden="true"><span>h</span></div>
                 <div class="header-info">
-                    <h2 id="app-title"><span class="greeting">zdarova, </span><span id="greeting-name"></span></h2>
-                    <p id="storage-info">10 GB disponibles</p>
+                    <h2 id="app-title">zdarova</h2>
+                    <p id="storage-summary">10 GB · calculando espacio</p>
                 </div>
             </div>
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <button id="delete-folder-btn" class="hidden interactive btn-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="#ff3b30" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <div class="header-right">
+                <button id="select-mode-btn" class="select-mode-btn" type="button">Seleccionar</button>
+                <button id="delete-folder-btn" class="icon-button danger-icon hidden" type="button" aria-label="Eliminar carpeta" title="Eliminar carpeta">
+                    <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                <div class="profile-pic interactive" id="user-avatar"></div>
+                <div class="profile-pic" id="user-avatar" aria-label="Foto de perfil de Telegram"></div>
             </div>
         </header>
-        
-        <main id="folders-grid" class="gallery-grid"></main>
-        <main id="gallery-grid" class="gallery-grid hidden"></main>
 
-        <button id="fab-btn" class="fab-upload interactive">
-            <svg viewBox="0 0 24 24" width="28" height="28">
-                <path d="M12 5v14M5 12h14" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+        <section id="home-hero" class="home-hero">
+            <div class="hero-copy">
+                <span class="eyebrow"><span class="live-dot"></span> TU ESPACIO PERSONAL</span>
+                <h1>Todo tu mundo.<br><em>En su sitio.</em></h1>
+                <p>Fotos y recuerdos, ordenados a tu manera.</p>
+            </div>
+            <div class="storage-card">
+                <div class="storage-card-top">
+                    <div>
+                        <span class="storage-kicker">ESPACIO DISPONIBLE</span>
+                        <div class="storage-number"><span id="storage-remaining">10 GB</span><span class="storage-total">/ 10 GB</span></div>
+                    </div>
+                    <div class="storage-symbol" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="27" height="27"><path d="M7 18.5h10a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7 8.6a4.8 4.8 0 0 0 0 9.9Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m9 13 3-3 3 3m-3-3v7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </div>
+                <div class="storage-track"><span id="storage-progress"></span></div>
+                <div class="storage-card-bottom"><span id="storage-used-label">0 B usados de 10 GB</span><span id="storage-percent">0%</span></div>
+            </div>
+            <div class="hero-orbit orbit-one"></div>
+            <div class="hero-orbit orbit-two"></div>
+        </section>
+
+        <section class="content-section" id="home-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-overline">TU COLECCIÓN</span>
+                    <h3>Tus carpetas <span class="heading-spark">✳</span></h3>
+                </div>
+                <span id="folder-count" class="item-count">0 carpetas</span>
+            </div>
+            <main id="folders-grid" class="gallery-grid"></main>
+        </section>
+
+        <section id="gallery-section" class="content-section hidden">
+            <div class="section-heading gallery-section-heading">
+                <div>
+                    <span class="section-overline">DENTRO DE</span>
+                    <h3 id="gallery-heading">Tus fotos</h3>
+                </div>
+                <span id="file-count" class="item-count">0 archivos</span>
+            </div>
+            <main id="gallery-grid" class="gallery-grid hidden"></main>
+        </section>
+
+        <div id="selection-toolbar" class="selection-toolbar hidden">
+            <div class="selection-copy"><span class="selection-count-dot"></span><span id="selection-count">0 seleccionados</span></div>
+            <button id="bulk-delete-btn" class="bulk-delete-btn" type="button" disabled>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Eliminar
+            </button>
+            <button id="cancel-selection-btn" class="cancel-selection-btn" type="button" aria-label="Cancelar selección">Cancelar</button>
+        </div>
+
+        <button id="fab-btn" class="fab-upload" type="button" aria-label="Crear carpeta o subir archivos" title="Crear carpeta o subir archivos">
+            <svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
+            <span id="fab-label">Nueva carpeta</span>
         </button>
 
-        <input type="file" id="file-input" style="display: none;" multiple>
-        <input type="file" id="folder-input" style="display: none;" webkitdirectory directory multiple>
+        <input type="file" id="file-input" class="visually-hidden" multiple>
 
-        <div id="photo-modal" class="modal hidden">
-            <div class="photo-wrapper" id="photo-wrapper">
+        <div id="photo-modal" class="modal viewer-modal hidden" role="dialog" aria-modal="true" aria-label="Vista de archivo">
+            <div class="viewer-topbar">
+                <button id="close-photo-btn" class="viewer-icon-btn" type="button" aria-label="Cerrar foto">
+                    <svg viewBox="0 0 24 24" width="21" height="21"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+                <div class="viewer-file-info"><strong id="photo-caption">Foto</strong><span id="photo-subcaption">Vista previa</span></div>
+                <button id="zoom-btn" class="viewer-icon-btn" type="button" aria-label="Ampliar foto" title="Ampliar foto">
+                    <svg viewBox="0 0 24 24" width="21" height="21"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 5 5M10.8 7.5v6.6M7.5 10.8h6.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div id="viewer-stage" class="viewer-stage">
                 <img id="modal-img" src="" alt="Vista previa">
-            </div>
-            <div class="floating-controls">
-                <button id="download-btn" class="glass-btn primary interactive">descargar</button>
-                <button id="delete-btn" class="glass-btn danger interactive">eliminar</button>
-                <button onclick="closeModal()" class="glass-btn secondary interactive">cerrar</button>
-            </div>
-        </div>
-
-        <div id="folder-modal" class="modal hidden glass-modal">
-            <div class="modal-content">
-                <h3>nueva carpeta</h3>
-                <input type="text" id="folder-name" placeholder="nombre de la carpeta">
-                <button id="select-cover-btn" class="interactive">seleccionar portada</button>
-                <img id="cover-preview" class="hidden" src="">
-                <div class="modal-actions">
-                    <button onclick="closeFolderModal()" class="interactive">cancelar</button>
-                    <button id="create-folder-btn" class="interactive">crear</button>
+                <div id="viewer-file-placeholder" class="viewer-file-placeholder hidden">
+                    <div class="file-placeholder-icon"><svg viewBox="0 0 24 24" width="42" height="42"><path d="M6 2.8h8l4.5 4.5v13.9H6zM14 2.8v5h4.5M9 13h6M9 16.5h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <span id="viewer-file-name"></span>
+                    <span>La vista previa no está disponible</span>
                 </div>
             </div>
-        </div>
-
-        <div id="cover-selection-modal" class="modal hidden glass-modal">
-            <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-                <h3>selecciona una portada</h3>
-                <div id="cover-grid" class="gallery-grid" style="margin-top: 16px;"></div>
-                <button onclick="closeCoverSelectionModal()" style="margin-top: 16px; width: 100%;" class="interactive">cancelar</button>
+            <div class="viewer-bottombar">
+                <button id="download-btn" class="viewer-action viewer-download" type="button">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Descargar
+                </button>
+                <button id="delete-btn" class="viewer-action viewer-delete" type="button">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Eliminar
+                </button>
             </div>
         </div>
 
-        <div id="confirm-modal" class="modal hidden glass-modal">
-            <div class="modal-content confirm-box">
-                <h3 id="confirm-title">confirmar</h3>
-                <p id="confirm-desc">estás seguro?</p>
-                <div class="modal-actions">
-                    <button id="confirm-cancel" class="interactive">cancelar</button>
-                    <button id="confirm-ok" class="danger-btn interactive">eliminar</button>
+        <div id="folder-modal" class="modal sheet-modal hidden" role="dialog" aria-modal="true" aria-labelledby="folder-modal-title">
+            <div class="modal-content sheet-card">
+                <div class="sheet-handle"></div>
+                <div class="sheet-heading"><span class="sheet-icon">✳</span><div><span class="section-overline">NUEVA COLECCIÓN</span><h3 id="folder-modal-title">Crear carpeta</h3></div></div>
+                <label class="field-label" for="folder-name">Nombre de la carpeta</label>
+                <input type="text" id="folder-name" placeholder="Por ejemplo, verano 2026" maxlength="80" autocomplete="off">
+                <div class="cover-pick-row">
+                    <div class="cover-pick-preview" id="cover-pick-preview"><span>✳</span></div>
+                    <div class="cover-pick-copy"><strong>Portada</strong><span>Elige una foto que ya tengas guardada</span></div>
+                    <button id="select-cover-btn" class="secondary-button" type="button">Elegir foto</button>
                 </div>
+                <img id="cover-preview" class="hidden" src="" alt="Portada seleccionada">
+                <div class="modal-actions"><button id="cancel-folder-btn" class="secondary-button" type="button">Cancelar</button><button id="create-folder-btn" class="primary-button" type="button">Crear carpeta <span>↗</span></button></div>
             </div>
         </div>
+
+        <div id="cover-selection-modal" class="modal sheet-modal cover-modal hidden" role="dialog" aria-modal="true" aria-labelledby="cover-selection-title">
+            <div class="modal-content sheet-card cover-sheet-card">
+                <div class="sheet-handle"></div>
+                <div class="sheet-heading"><span class="sheet-icon">▧</span><div><span class="section-overline">PERSONALIZA TU CARPETA</span><h3 id="cover-selection-title">Elige una portada</h3></div></div>
+                <p class="sheet-description">Selecciona una imagen de tus archivos guardados.</p>
+                <div id="cover-grid" class="gallery-grid cover-grid"></div>
+                <button id="cancel-cover-btn" class="secondary-button full-width" type="button">Volver</button>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="modal confirm-modal hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+            <div class="confirm-card">
+                <div class="confirm-icon"><svg viewBox="0 0 24 24" width="25" height="25"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <span class="section-overline">CONFIRMACIÓN</span>
+                <h3 id="confirm-title">¿Eliminar elemento?</h3>
+                <p id="confirm-message">Esta acción no se puede deshacer.</p>
+                <div class="modal-actions"><button id="confirm-cancel-btn" class="secondary-button" type="button">Cancelar</button><button id="confirm-action-btn" class="confirm-danger-btn" type="button">Sí, eliminar</button></div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
     </div>
+
     <script src="main.js" defer></script>
 </body>
 </html>
