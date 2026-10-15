@@ -161,23 +161,40 @@ async def create_folder(
 
 
 @app.get('/folders', response_model=list[schemas.FolderResponse])
-async def get_folders(parent_id: int | None = None, current_user: models.User = Depends(get_current_user), db_session: AsyncSession = Depends(get_db)):
-    folders = await crud.get_user_folders(db_session, current_user.id, parent_id)
+async def get_folders(
+    parent_id: int | None = None,
+    current_user: models.User = Depends(get_current_user),
+    db_session: AsyncSession = Depends(get_db)
+):
+    folders = await crud.get_user_folders(
+        db_session,
+        current_user.id,
+        parent_id
+    )
+
     folder_list = []
+
     for f in folders:
         url = None
+
         if f.cover_url:
             url = s3_client.generate_presigned_url(
                 'get_object',
-                Params={'Bucket': R2_BUCKET_NAME, 'Key': f.cover_url},
+                Params={
+                    'Bucket': R2_BUCKET_NAME,
+                    'Key': f.cover_url
+                },
                 ExpiresIn=604800
             )
+
         folder_list.append({
             "id": f.id,
             "name": f.name,
             "cover_url": url,
-            "parent_id": f.parent_id
+            "parent_id": f.parent_id,
+            "created_at": f.created_at
         })
+
     return folder_list
 
 
