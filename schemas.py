@@ -25,6 +25,7 @@ class FolderCreate(BaseModel):
 class FolderResponse(BaseModel):
     id: int
     name: str
+    cover_url: Optional[str] = None
     parent_id: Optional[int]
     created_at: datetime
 

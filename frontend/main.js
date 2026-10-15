@@ -41,7 +41,7 @@ function renderFolders(folders) {
     const foldersGrid = document.getElementById("folders-grid");
     foldersGrid.innerHTML = "";
     if (folders.length === 0) {
-        foldersGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">no hay carpetas</div>`;
+        foldersGrid.innerHTML = "<div style=\"grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);\">no hay carpetas</div>";
         return;
     }
     folders.forEach(folder => {
@@ -76,7 +76,7 @@ function renderGallery(files) {
     const galleryGrid = document.getElementById("gallery-grid");
     galleryGrid.innerHTML = "";
     if (files.length === 0) {
-        galleryGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">carpeta vacía</div>`;
+        galleryGrid.innerHTML = "<div style=\"grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);\">carpeta vacía</div>";
         return;
     }
     files.forEach(file => {
@@ -93,6 +93,7 @@ function openFolder(folderId, folderName) {
     currentFolderId = folderId;
     document.getElementById("app-title").textContent = folderName;
     document.getElementById("back-btn").classList.remove("hidden");
+    document.getElementById("delete-folder-btn").classList.remove("hidden");
     document.getElementById("folders-grid").classList.add("hidden");
     document.getElementById("gallery-grid").classList.remove("hidden");
     loadFiles();
@@ -102,6 +103,7 @@ document.getElementById("back-btn").addEventListener("click", () => {
     currentFolderId = null;
     document.getElementById("app-title").textContent = "mi cloud";
     document.getElementById("back-btn").classList.add("hidden");
+    document.getElementById("delete-folder-btn").classList.add("hidden");
     document.getElementById("gallery-grid").classList.add("hidden");
     document.getElementById("folders-grid").classList.remove("hidden");
     loadFolders();
@@ -109,7 +111,6 @@ document.getElementById("back-btn").addEventListener("click", () => {
 
 const fabBtn = document.getElementById("fab-btn");
 const fileInput = document.getElementById("file-input");
-const coverInput = document.getElementById("cover-input");
 
 fabBtn.addEventListener("click", () => {
     if (currentFolderId === null) {
@@ -119,17 +120,54 @@ fabBtn.addEventListener("click", () => {
     }
 });
 
-document.getElementById("select-cover-btn").addEventListener("click", () => coverInput.click());
-
-coverInput.addEventListener("change", (e) => {
-    if (e.target.files.length > 0) {
-        selectedCoverFile = e.target.files[0];
-        const previewUrl = URL.createObjectURL(selectedCoverFile);
-        const previewImg = document.getElementById("cover-preview");
-        previewImg.src = previewUrl;
-        previewImg.classList.remove("hidden");
+document.getElementById("select-cover-btn").addEventListener("click", async () => {
+    document.getElementById("cover-selection-modal").classList.remove("hidden");
+    const coverGrid = document.getElementById("cover-grid");
+    coverGrid.innerHTML = "<p style=\"grid-column: 1 / -1; text-align: center;\">cargando fotos...</p>";
+    try {
+        const url = currentFolderId ? `/files?folder_id=${currentFolderId}` : "/files";
+        const response = await fetch(url, { headers: authHeaders });
+        if (response.ok) {
+            const files = await response.json();
+            coverGrid.innerHTML = "";
+            if (files.length === 0) {
+                coverGrid.innerHTML = "<p style=\"grid-column: 1 / -1; text-align: center; color: var(--text-muted);\">no hay fotos disponibles</p>";
+            } else {
+                files.forEach(file => {
+                    const item = document.createElement("div");
+                    item.className = "photo-item";
+                    item.innerHTML = `<img src="${file.storage_path}" alt="${file.name}" loading="lazy">`;
+                    item.onclick = () => selectCoverFromApp(file.id, file.name);
+                    coverGrid.appendChild(item);
+                });
+            }
+        }
+    } catch (error) {
+        coverGrid.innerHTML = "<p style=\"grid-column: 1 / -1; text-align: center;\">error al cargar</p>";
     }
 });
+
+function closeCoverSelectionModal() {
+    document.getElementById("cover-selection-modal").classList.add("hidden");
+}
+
+async function selectCoverFromApp(fileId, fileName) {
+    closeCoverSelectionModal();
+    const selectBtn = document.getElementById("select-cover-btn");
+    selectBtn.textContent = "descargando...";
+    try {
+        const response = await fetch(`/files/${fileId}/download`, { headers: authHeaders });
+        if (response.ok) {
+            const blob = await response.blob();
+            selectedCoverFile = new File([blob], fileName, { type: blob.type || "image/jpeg" });
+            const previewUrl = URL.createObjectURL(selectedCoverFile);
+            const previewImg = document.getElementById("cover-preview");
+            previewImg.src = previewUrl;
+            previewImg.classList.remove("hidden");
+        }
+    } catch (error) {}
+    selectBtn.textContent = "seleccionar portada";
+}
 
 document.getElementById("create-folder-btn").addEventListener("click", async () => {
     const folderName = document.getElementById("folder-name").value;
@@ -158,14 +196,13 @@ function closeFolderModal() {
     document.getElementById("cover-preview").classList.add("hidden");
     document.getElementById("cover-preview").src = "";
     selectedCoverFile = null;
-    coverInput.value = "";
 }
 
 fileInput.addEventListener("change", async (e) => {
     const files = e.target.files;
     if (!files.length) return;
     const originalContent = fabBtn.innerHTML;
-    fabBtn.innerHTML = '<span style="color:#000; font-weight:bold;">...</span>';
+    fabBtn.innerHTML = "<span style=\"color:#000; font-weight:bold;\">...</span>";
     for (const file of files) {
         const formData = new FormData();
         formData.append("file", file);
@@ -186,6 +223,7 @@ fileInput.addEventListener("change", async (e) => {
 function openModal(photo) {
     selectedPhotoId = photo.id;
     document.getElementById("modal-img").src = photo.url;
+    document.getElementById("modal-img").alt = photo.name;
     document.getElementById("photo-modal").classList.remove("hidden");
 }
 
@@ -193,6 +231,27 @@ function closeModal() {
     document.getElementById("photo-modal").classList.add("hidden");
     selectedPhotoId = null;
 }
+
+document.getElementById("download-btn").addEventListener("click", async () => {
+    if (selectedPhotoId) {
+        try {
+            const response = await fetch(`/files/${selectedPhotoId}/download`, {
+                headers: authHeaders
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = document.getElementById("modal-img").alt || "download";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        } catch (error) {}
+    }
+});
 
 document.getElementById("delete-btn").addEventListener("click", async () => {
     if (selectedPhotoId) {
@@ -204,6 +263,20 @@ document.getElementById("delete-btn").addEventListener("click", async () => {
             if (response.ok) {
                 closeModal();
                 loadFiles();
+            }
+        } catch (error) {}
+    }
+});
+
+document.getElementById("delete-folder-btn").addEventListener("click", async () => {
+    if (currentFolderId) {
+        try {
+            const response = await fetch(`/folders/${currentFolderId}`, {
+                method: "DELETE",
+                headers: authHeaders
+            });
+            if (response.ok) {
+                document.getElementById("back-btn").click();
             }
         } catch (error) {}
     }

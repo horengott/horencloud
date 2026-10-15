@@ -47,7 +47,14 @@
                     <p>dohuya GB disponibles</p>
                 </div>
             </div>
-            <div class="profile-pic" id="user-avatar"></div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button id="delete-folder-btn" class="hidden" style="background: none; border: none; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="#ff3b30" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="profile-pic" id="user-avatar"></div>
+            </div>
         </header>
         
         <main id="folders-grid" class="gallery-grid"></main>
@@ -60,10 +67,10 @@
         </button>
 
         <input type="file" id="file-input" style="display: none;" multiple>
-        <input type="file" id="cover-input" style="display: none;" accept="image/*">
 
         <div id="photo-modal" class="modal hidden">
             <img id="modal-img" src="" alt="Vista previa">
+            <button id="download-btn" style="background-color: var(--accent-green); color: #000; border: none; padding: 12px 24px; border-radius: 12px; font-weight: bold; margin-bottom: 12px; width: 100%; max-width: 200px;">download</button>
             <button id="delete-btn">delete</button>
             <button onclick="closeModal()">close</button>
         </div>
@@ -75,9 +82,17 @@
                 <button id="select-cover-btn">seleccionar portada</button>
                 <img id="cover-preview" class="hidden" src="">
                 <div class="modal-actions">
-                    <button id="create-folder-btn">crear</button>
                     <button onclick="closeFolderModal()">cancelar</button>
+                    <button id="create-folder-btn">crear</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="cover-selection-modal" class="modal hidden">
+            <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+                <h3>selecciona una portada</h3>
+                <div id="cover-grid" class="gallery-grid" style="margin-top: 16px;"></div>
+                <button onclick="closeCoverSelectionModal()" style="margin-top: 16px; width: 100%;">cancelar</button>
             </div>
         </div>
     </div>
