@@ -36,28 +36,49 @@
 
     <div id="main-app" class="screen hidden">
         <header class="mono-header">
-            <div class="header-info">
-                <h2>mi cloud</h2>
-                <p>dohuya GB disponibles</p>
+            <div class="header-left">
+                <button id="back-btn" class="hidden">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="header-info">
+                    <h2 id="app-title">mi cloud</h2>
+                    <p>dohuya GB disponibles</p>
+                </div>
             </div>
-            <div class="profile-pic"></div>
+            <div class="profile-pic" id="user-avatar"></div>
         </header>
         
-        <main id="gallery-grid" class="gallery-grid">
-        </main>
+        <main id="folders-grid" class="gallery-grid"></main>
+        <main id="gallery-grid" class="gallery-grid hidden"></main>
 
-        <button id="upload-btn" class="fab-upload">
+        <button id="fab-btn" class="fab-upload">
             <svg viewBox="0 0 24 24" width="28" height="28">
                 <path d="M12 5v14M5 12h14" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
         </button>
 
         <input type="file" id="file-input" style="display: none;" multiple>
+        <input type="file" id="cover-input" style="display: none;" accept="image/*">
 
         <div id="photo-modal" class="modal hidden">
             <img id="modal-img" src="" alt="Vista previa">
             <button id="delete-btn">delete</button>
             <button onclick="closeModal()">close</button>
+        </div>
+
+        <div id="folder-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>nueva carpeta</h3>
+                <input type="text" id="folder-name" placeholder="nombre de la carpeta">
+                <button id="select-cover-btn">seleccionar portada</button>
+                <img id="cover-preview" class="hidden" src="">
+                <div class="modal-actions">
+                    <button id="create-folder-btn">crear</button>
+                    <button onclick="closeFolderModal()">cancelar</button>
+                </div>
+            </div>
         </div>
     </div>
 
