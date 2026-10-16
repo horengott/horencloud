@@ -850,16 +850,36 @@ async function initApp() {
         telegramApp.ready();
         telegramApp.expand();
         setTelegramAvatar();
-    } else {
-        $("#app-title").textContent = "zdarova, tip";
     }
-    const isAuthenticated = await authenticate();
-    $("#main-app").classList.remove("hidden");
-    if (isAuthenticated) await loadFolders();
-    else {
-        renderFolders([]);
-        updateStorageDisplay(0);
+
+    const onboarding = $("#onboarding");
+    const mainApp = $("#main-app");
+    const onboardingCompleted = localStorage.getItem("horencloud_onboarding_completed");
+
+    if (onboardingCompleted === "true") {
+        onboarding.classList.add("hidden");
+        mainApp.classList.remove("hidden");
+        await authenticate();
+        await loadFolders();
+        return;
     }
+
+    onboarding.classList.remove("hidden");
+    mainApp.classList.add("hidden");
+
+    $("#next-btn").onclick = async () => {
+        localStorage.setItem("horencloud_onboarding_completed", "true");
+        onboarding.classList.add("hidden");
+        mainApp.classList.remove("hidden");
+
+        const isAuthenticated = await authenticate();
+
+        if (isAuthenticated) {
+            await loadFolders();
+        } else {
+            renderFolders([]);
+        }
+    };
 }
 
 initApp();
